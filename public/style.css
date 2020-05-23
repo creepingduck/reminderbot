@@ -1,0 +1,36 @@
+/* styles */
+/* called by your view template */
+
+html { 
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  background: url(https://cdn.glitch.com/9b3b9969-b67b-42a8-abe0-2e4a50dd3e24%2Fprism.png?v=1581446104749);
+  background-blend-mode: multiply, normal;
+}
+
+h1{
+  position: relative;
+  
+  left: calc(50%  );
+  top: calc(50% );
+
+  font-family: Arial;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 50px;
+
+  display: flex;
+  text-align: center;
+  align-items: center;
+  color: #E0E0E0;
+  
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  argin-right: -50%;
+  transform: translate(-50%, -50%) 
+
+}
