@@ -1,11 +1,10 @@
 
 const config = require('./config.json')
+const secrets = require("./secrets.json")
 const moment = require('moment')
 const fs = require('fs');
 const Discord = require("discord.js")
 const bot = new Discord.Client()
-const express = require("express")
-const app = express()
 
 
 function getRandomInt(max) {
@@ -221,15 +220,6 @@ bot.on("message", msg => {
 
 
 
-bot.login(process.env.TOKEN);
+bot.login(secrets.token).catch(console.error);
 
 
-app.use(express.static("public"));
-
-app.get("/", function(request, response) {
-  response.sendFile(__dirname + "/views/index.html");
-});
-
-const listener = app.listen(process.env.PORT, function() {
-  console.log("Your app is listening on port " + listener.address().port);
-});
