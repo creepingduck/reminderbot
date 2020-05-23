@@ -1,0 +1,37 @@
+{
+    "timerSavePath" : "testtimer.bin",
+
+    "channel" : { 
+        "679363260159623170" : "типо-бамп-серва"
+    },
+
+    "commands" : {
+        "_prefix" : "_",
+        "timeRemain" : "remain",
+        "resetTimer" : "reset",
+        "subscribe" : "sub",
+        "unsubscribe" : "unsub",
+        "help" : "help"
+    },
+    "devRoles" : {
+        "676744841270525972" : "Модер", 
+        "681004318412767252" : "Админ"
+    },
+    "notificateRole" : {
+        "681004371114328075" : "Бампер"
+    },
+    "advancedMessages" : [
+        "bampaite!",
+        "bampaite! pls"
+    ],
+    "waitingTime" : {
+        "seconds" : "0",
+        "minutes" : "5",
+        "hours" : "0"
+    },
+    "updateTime" :{
+        "hours" : "0",
+        "minutes" : "1",
+        "seconds" : "0"
+    }
+}
