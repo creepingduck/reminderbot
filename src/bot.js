@@ -1,9 +1,8 @@
 
 const config = require('./config.json')
-const secrets = require("./secrets.json")
 const moment = require('moment')
-const fs = require('fs');
 const Discord = require("discord.js")
+const mongoInit = require("./database/monooseInit");
 const bot = new Discord.Client()
 
 
@@ -220,7 +219,8 @@ bot.on("message", msg => {
 
 
 
-bot.login(secrets.token).catch(console.error);
-
+//bot.login(process.env.TOKEN).catch(console.error);
+//mongoInit().catch(console.error);
+console.log("Running...");
 //
 // "698609590400712764" : "📈продвижение-сервера"
