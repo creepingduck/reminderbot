@@ -223,3 +223,4 @@ bot.on("message", msg => {
 bot.login(secrets.token).catch(console.error);
 
 
+// "698609590400712764" : "📈продвижение-сервера"
