@@ -3,6 +3,7 @@ const config = require('./config.json')
 const moment = require('moment')
 const Discord = require("discord.js")
 const mongoInit = require("./database/monooseInit");
+const GuildModel = require("./database/guild")
 const bot = new Discord.Client()
 
 
@@ -37,6 +38,7 @@ const UpdateTime = TimerDataToMsec(config.updateTime);
 var TextChannel;
 var EndTime;
 var Timer;
+var GuildObject;
 
 function SetupTextChannel (){
     let id = Object.keys(config.channel)[0]; // id канала из конфига
@@ -71,20 +73,22 @@ function RunTimer (customWaitingTime){
     SaveTimer();
 }
 
-function SaveTimer (customEndTime){
-    fs.writeFileSync(config.timerSavePath, `${customEndTime ? customEndTime : EndTime}`);
+async function SaveTimer (customEndTime){
+    GuildObject.timer = customEndTime ? customEndTime : EndTime;
+    GuildObject.save();
     console.log(`Сохранение таймера`);
 }
 
-function LoadTimer (){
+async function LoadTimer (){
     let timeToExec;
     try{
-        timeToExec = fs.readFileSync(config.timerSavePath, "utf8");}
+        timeToExec = GuildObject.timer;
+    }
     catch(e){}
 
-    if(!isNaN(timeToExec) && parseInt(timeToExec) > Date.now()){
+    if(!isNaN(timeToExec) && timeToExec > Date.now()){
         console.log(`Загрузка предыдущего таймера. Он сработает через ${moment(timeToExec - Date.now()).format("HH:mm:ss")}`);
-        RunTimer(parseInt(timeToExec - Date.now()));
+        RunTimer(timeToExec - Date.now());
     }else{
         console.log(`Загрузка предыдущего таймера. Его нет`);
     }
@@ -104,14 +108,14 @@ function isExecuteMsg (msg) {
 }
 
 
-bot.on("ready", () => {
+bot.on("ready", async () => {
     SetupTextChannel();
     console.info(`Logged in as ${bot.user.tag}!`);
     LoadTimer();
   
 });
 
-bot.on("message", msg => {
+bot.on("message",async msg => {
     if (msg.channel.id != TextChannel.id){
         return;
     }
@@ -151,7 +155,7 @@ bot.on("message", msg => {
 
     // Reset
     if (strCmp(msg.content, config.commands._prefix + config.commands.resetTimer) && 
-    msg.member._roles.some((o) => Object.keys(config.devRoles).some((d) => d == o) )){
+    msg.member.roles.some((o) => Object.keys(config.devRoles).some((d) => d == o.id) )){
         console.log(`=Таймер сброшен`);
         if (Timer){
             clearTimeout(Timer);
@@ -191,9 +195,10 @@ bot.on("message", msg => {
 
     // Subscribe
     if (strCmp(msg.content, config.commands._prefix + config.commands.subscribe)){
-        if (!(msg.member._roles.some((o) => o == Object.keys(config.notificateRole)[0]))){
-            msg.member.addRole(Object.keys(config.notificateRole)[0])
-              .then(TextChannel.send("Вы подписались на уведомления"))
+        if (!(msg.member.roles.some((o) => o.id == Object.keys(config.notificateRole)[0]))){
+
+            await msg.member.addRole(Object.keys(config.notificateRole)[0]).catch(console.error);
+            TextChannel.send("Вы подписались на уведомления");
               //.catch(TextChannel.send("Не удалось подписать вас на уведомления"));
             console.log(`=Пользователь ${msg.member.user.username} подписался на рассылку`);
         }else{
@@ -204,10 +209,10 @@ bot.on("message", msg => {
 
     // UnSubscribe
     if (strCmp(msg.content, config.commands._prefix + config.commands.unsubscribe)){
-            if (msg.member._roles.some((o) => o == Object.keys(config.notificateRole)[0])){
-                msg.member.removeRole(Object.keys(config.notificateRole)[0])
-                  .then(TextChannel.send("Вы отписались от уведомлений"))
-                  //.catch(TextChannel.send("Не удалось отписать вас от уведомлений"));
+            if (msg.member.roles.some((o) => o.id == Object.keys(config.notificateRole)[0])){
+                await msg.member.removeRole(Object.keys(config.notificateRole)[0])
+                TextChannel.send("Вы отписались от уведомлений");
+                //.catch(TextChannel.send("Не удалось отписать вас от уведомлений"));
                 
                 console.log(`=Пользователь ${msg.member.user.username} отписался от рассылки`);
             }else{
@@ -218,9 +223,13 @@ bot.on("message", msg => {
 });
 
 
-
-//bot.login(process.env.TOKEN).catch(console.error);
-//mongoInit().catch(console.error);
-console.log("Running...");
+async function run (){
+    await mongoInit().catch(console.error);
+    GuildObject = await GuildModel.findOne({guildID: "698474167896506368"});
+    bot.login(process.env.TOKEN).catch(console.error);
+    //console.log(GuildModel.create({guildID: "698474167896506368"}).catch(console.error));
+    //console.log("Running...");
+}
+run();
 //
 // "698609590400712764" : "📈продвижение-сервера"
