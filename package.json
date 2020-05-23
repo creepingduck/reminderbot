@@ -8,11 +8,8 @@
   },
   "dependencies": {
     "discord.js": "^11.5.1",
-    "moment": "^2.24.0"
-  },
-  "license": "MIT",
-  "keywords": [],
-  "devDependencies": {
+    "moment": "^2.24.0",
     "mongoose": "^5.9.15"
-  }
+  },
+  "license": "MIT"
 }
