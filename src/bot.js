@@ -1,4 +1,4 @@
-
+require('dotenv').config();
 const config = require('./config.json')
 const moment = require('moment')
 const Discord = require("discord.js")
